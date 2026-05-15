@@ -1,0 +1,30 @@
+base:
+  arbiter_model: anthropic/claude-sonnet-4-6
+  observer_model: anthropic/claude-haiku-4-5-20251001
+  observer_frequency: 1
+  termination:
+    max_rounds: 8
+    min_new_claims_per_round: 1
+    no_challenge_rounds: 2
+    min_position_update_rate: 0.1
+
+experiments:
+  - name: honest_3_model
+    version: A
+    roster:
+      - anthropic/claude-sonnet-4-6
+      - openai/gpt-4o
+      - google/gemini-2.0-flash-001
+    prompt_file: prompts/example.txt
+
+  - name: manipulation_3_model
+    version: B
+    roster:
+      - anthropic/claude-sonnet-4-6
+      - openai/gpt-4o
+      - google/gemini-2.0-flash-001
+    prompt_file: prompts/example.txt
+    overrides:
+      manipulation:
+        injection_n: 3
+        inject_every_n_rounds: 1
