@@ -1,5 +1,6 @@
 # Council of Agents — default run configuration
 name: my_run
+prompt_file: prompts/example.txt
 version: A        # A = honest protocol, B = manipulation protocol
 mock: false
 

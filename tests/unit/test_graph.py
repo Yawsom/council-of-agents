@@ -111,9 +111,10 @@ class TestEdgeValidation:
         # Should not raise
         Edge.create(EdgeType.SUPPORTS, "evidence:abc", "claim:xyz", "fine", "a", 0)
 
-    def test_depends_on_must_target_assumption(self):
-        with pytest.raises(EdgeValidationError):
-            Edge.create(EdgeType.DEPENDS_ON, "claim:abc", "claim:xyz", "wrong", "a", 0)
+    def test_depends_on_can_target_claim_or_assumption(self):
+        # depends_on is permissive — both claims and assumptions are valid targets
+        Edge.create(EdgeType.DEPENDS_ON, "claim:abc", "claim:xyz", "ok", "a", 0)
+        Edge.create(EdgeType.DEPENDS_ON, "claim:abc", "assumption:xyz", "ok", "a", 0)
 
     def test_contradicts_must_target_claim(self):
         with pytest.raises(EdgeValidationError):
