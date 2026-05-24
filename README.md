@@ -52,8 +52,8 @@ Version B is controlled by `manipulation.*` settings in the config and is intend
 ## Installation
 
 ```bash
-git clone <repo-url>
-cd agent-council
+git clone https://github.com/Yawsom/council-of-agents.git
+cd council-of-agents
 
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
