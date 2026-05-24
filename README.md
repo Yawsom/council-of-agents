@@ -4,7 +4,7 @@
 
 A **perspective-exploration** engine: several heterogeneous LLMs independently analyze a question, stress-test each other's claims on a shared graph, and deliver **separate battle-tested verdicts**. This is not a consensus bot. The goal is to surface durable disagreements, abandoned claims, and what survived scrutiny — not to merge opinions into one answer.
 
-> **Early research preview.** This is an early version of the project and is still in the research phase. APIs, configs, and experiment protocols may change without notice. Expect rough edges — use it for exploration and experimentation, not production workloads.
+> **Early research preview.** This is an early version of the project and is still in the research phase. APIs, configs, and experiment protocols may change without notice. Expect rough edges — use it for exploration and experimentation, not production workloads. **Evidence is not fact-checked:** agents may cite sources freely; the observer audits graph-structural consistency, not whether cited evidence is real, current, or verifiable.
 
 ### Active development constraints
 
@@ -33,6 +33,13 @@ Phase 3 — Verdicts
    ▼
 Artifacts written to runs/
 ```
+
+Here's what a real run looks like. Two agents independently stress-tested *"Should you crumple or fold toilet paper before use?"* over five rounds — then delivered separate verdicts (full walkthrough in [docs/EXAMPLE_RUNS.md](docs/EXAMPLE_RUNS.md)):
+
+| Agent | Final position (summary) |
+|-------|---------------------------|
+| **Gemma** | Leans **folding** as the more **robust** hygienic default: predictable performance across liquid levels; crumpling risks smearing via preferential flow paths past a threshold |
+| **Elephant** | **No universal winner** — choice is **context-dependent** on liquid-to-particulate load: crumple when particulate-heavy/dry; fold when liquid-heavy |
 
 ### Protocol versions
 
@@ -78,6 +85,8 @@ Keys are read from the environment (or a `.env` file in the project root):
 | `OPENAI_API_KEY` | Optional | Embeddings when `embedder.provider: openai` |
 
 Run settings live in YAML. See `config/default.yaml` for the full schema.
+
+The **default roster is Gemma-heavy** because free-tier OpenRouter rate limits make heterogeneous rosters hard to run in practice. The protocol is designed for **2–3 models from different families in a similar capability band** — see [`experiments/example.yaml`](experiments/example.yaml) for a recommended paid-access roster (Sonnet, GPT-4o, Gemini).
 
 Key fields:
 
