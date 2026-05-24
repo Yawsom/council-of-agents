@@ -1,6 +1,6 @@
 # Example Runs
 
-These summaries are drawn from real artifacts under `runs/`. They show what a successful council deliberation looks like: independent Phase 1 analysis, a growing contested claim graph in Phase 2, and **distinct Phase 3 verdicts** that reflect battle-tested positions—not consensus for its own sake.
+These summaries are drawn from real artifacts under `runs/`. They show what a successful council deliberation looks like under the design in [PHILOSOPHY.md](PHILOSOPHY.md): independent Phase 1 analysis, a growing contested claim graph in Phase 2, and **distinct Phase 3 verdicts** that reflect battle-tested positions—not consensus for its own sake.
 
 > Agents are not told they are in a debate during Phase 1. Convergence in final verdicts can happen and is itself a finding; the examples below highlight runs where models **diverged** after stress-testing.
 
@@ -152,5 +152,6 @@ After a **live** run, open `runs/<latest>/output.md` and check that Phase 3 verd
 
 ## Further reading
 
+- [PHILOSOPHY.md](PHILOSOPHY.md) — core design intent
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how phases and roles connect
 - [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) — rate limits, dedup, and other iteration notes
