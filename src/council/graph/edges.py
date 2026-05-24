@@ -1,3 +1,8 @@
+"""Graph edge types and validation rules.
+
+Edge type constraints (e.g. rebuts must target a claim) are enforced here
+before edges are added to the graph.
+"""
 from __future__ import annotations
 
 import uuid

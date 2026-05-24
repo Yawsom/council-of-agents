@@ -1,3 +1,9 @@
+"""Phase 1: sealed exploration.
+
+Each council agent analyzes the question independently. Outputs are parsed,
+deduplicated via identity.check_identity(), and ingested into the claim graph.
+Agents that fail to produce valid JSON are marked excluded for later phases.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -36,6 +42,7 @@ async def run_phase1(
     artifacts_writer=None,
     stagger_delay: float = 0.0,
 ) -> Phase1Result:
+    """Run sealed exploration: parallel agent calls, dedup, graph ingestion."""
     merge_log: list[dict] = []
     agent_responses: list[dict] = []
     abstained: list[str] = []

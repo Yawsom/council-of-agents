@@ -1,3 +1,7 @@
+"""Mock LLM provider — canned JSON responses keyed by prompt phase/role.
+
+Enables full pipeline dry runs via `council run --mock` without API keys.
+"""
 from __future__ import annotations
 
 import json

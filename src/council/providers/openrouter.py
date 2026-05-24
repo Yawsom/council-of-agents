@@ -1,3 +1,4 @@
+"""OpenRouter API client with per-model concurrency limits and retry backoff."""
 from __future__ import annotations
 
 import asyncio

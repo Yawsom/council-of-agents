@@ -1,3 +1,13 @@
+"""Phase 2: stress-test loop.
+
+Repeats until a termination condition is met. Each round:
+  1. Agents challenge peers and update the graph (parallel, staggered)
+  2. Arbiter issues a targeted query and may terminate early
+  3. Observer audits agent faithfulness (every N rounds)
+  4. Termination stats are evaluated
+
+Version B agents receive a disguised graph view via DisguisePipeline.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -65,6 +75,7 @@ async def run_phase2(
     artifacts_writer=None,
     stagger_delay: float = 0.0,
 ) -> Phase2Result:
+    """Run the stress-test loop until a termination condition is met."""
     merge_log: list[dict] = []
     round_transcripts: list[dict] = []
     observer_log: list[dict] = []
@@ -92,7 +103,7 @@ async def run_phase2(
                 targeted_query=targeted_query,
             )
 
-        # Staggered parallel agent calls (excluded agents already filtered above)
+        # --- Round step 1: agents propose challenges and updates ---
         agent_results = await _stagger_gather(
             [
                 _call_agent_phase2(
@@ -252,7 +263,7 @@ async def run_phase2(
                 targeted_query=targeted_query,
             )
 
-        # --- Arbiter ---
+        # --- Round step 2: arbiter reviews graph and sets next targeted query ---
         n_agents = len(agents)
         update_rate = position_updates_this_round / max(1, n_agents)
         termination_stats = {
@@ -295,7 +306,7 @@ async def run_phase2(
                     targeted_query=targeted_query,
                 )
 
-        # --- Observer ---
+        # --- Round step 3: observer audits agent outputs (every N rounds) ---
         if observer_frequency > 0 and round_num % observer_frequency == 0:
             for agent, agent_entry in zip(active_agents, round_data["agents"]):
                 if agent_entry["parsed"] is None:
@@ -339,7 +350,7 @@ async def run_phase2(
             if merge_log:
                 artifacts_writer.write_merge_log(merge_log)
 
-        # --- Check termination ---
+        # --- Round step 4: evaluate automatic termination criteria ---
         if new_challenges_this_round == 0:
             no_challenge_rounds += 1
         else:
@@ -381,6 +392,7 @@ def _check_termination(
     no_challenge_rounds: int,
     cfg,
 ) -> Optional[str]:
+    """Return a termination reason string, or None to continue the loop."""
     if round_num >= cfg.max_rounds:
         return "max_rounds"
     if new_claims < cfg.min_new_claims_per_round:

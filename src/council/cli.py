@@ -1,3 +1,11 @@
+"""CLI entry point — wires config, providers, and the three-phase pipeline.
+
+Commands:
+  council run        — single deliberation
+  council experiment — batch runs from a YAML experiment file
+
+See docs/ARCHITECTURE.md for how modules connect.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -77,6 +85,7 @@ def _build_provider(config: RunConfig, round_counter: Optional[list[int]] = None
 
 
 async def _run_council(config: RunConfig, writer: ArtifactsWriter) -> dict:
+    """Wire dependencies and execute phases 1 → 2 → 3, then finalize artifacts."""
     question = config.get_prompt_text()
     round_counter = [0]
 

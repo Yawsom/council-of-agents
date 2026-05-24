@@ -1,3 +1,4 @@
+"""Write run artifacts — transcripts, graph snapshots, and summary reports."""
 from __future__ import annotations
 
 import json

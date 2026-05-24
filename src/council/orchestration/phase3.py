@@ -1,3 +1,9 @@
+"""Phase 3: final verdicts.
+
+Each non-excluded agent summarizes what survived scrutiny, what they abandoned,
+and which peer challenges they found compelling. The observer optionally checks
+verdict grounding against the final graph.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -39,6 +45,7 @@ async def run_phase3(
     artifacts_writer=None,
     stagger_delay: float = 0.0,
 ) -> Phase3Result:
+    """Collect final verdicts from all non-excluded agents."""
     known_ids = {n.id for n in graph.claims + graph.evidence + graph.assumptions}
     active_agents = [a for a in agents if not a.excluded]
 

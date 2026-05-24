@@ -1,3 +1,4 @@
+"""Graph node types — claims, evidence, and assumptions."""
 from __future__ import annotations
 
 import uuid

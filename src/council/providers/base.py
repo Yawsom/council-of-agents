@@ -1,3 +1,4 @@
+"""LLM provider interface — abstract transport layer for all roles."""
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

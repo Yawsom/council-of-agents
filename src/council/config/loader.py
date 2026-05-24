@@ -1,3 +1,4 @@
+"""YAML config loading and environment variable resolution for API keys."""
 from __future__ import annotations
 
 import os

@@ -1,3 +1,8 @@
+"""Claim graph — central shared state for a deliberation run.
+
+All agents propose updates; orchestration ingests them into this graph.
+The arbiter and observer read from it; serializer.py formats it for prompts.
+"""
 from __future__ import annotations
 
 from typing import Optional, Union
@@ -9,6 +14,8 @@ AnyNode = Union[Claim, Evidence, Assumption]
 
 
 class ClaimGraph:
+    """In-memory claim graph — the shared deliberation state."""
+
     def __init__(self) -> None:
         self._claims: dict[str, Claim] = {}
         self._evidence: dict[str, Evidence] = {}

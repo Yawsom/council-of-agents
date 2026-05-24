@@ -1,3 +1,9 @@
+"""Serialize the claim graph into text for LLM prompts.
+
+Produces the "Current Claim Graph State" block that agents, the arbiter,
+and the observer see. Includes active claims, evidence, assumptions, and
+unanswered challenges.
+"""
 from __future__ import annotations
 
 from .edges import EdgeType

@@ -1,3 +1,8 @@
+"""Text embedding backends for claim deduplication.
+
+Supports local (sentence-transformers), OpenAI, OpenRouter, and a no-op
+NullEmbedder. Configured via embedder.provider in the run config.
+"""
 from __future__ import annotations
 
 import logging

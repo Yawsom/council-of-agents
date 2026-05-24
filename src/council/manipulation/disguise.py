@@ -1,3 +1,9 @@
+"""Version B disguise pipeline — inject synthetic peer support.
+
+Rephrases an agent's own claims and injects them into that agent's graph
+view as if they came from a synthetic peer. Used to study sycophancy and
+self-reinforcement under manipulated social proof.
+"""
 from __future__ import annotations
 
 import hashlib

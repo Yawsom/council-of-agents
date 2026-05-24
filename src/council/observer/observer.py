@@ -1,3 +1,8 @@
+"""Observer — auditor for agent faithfulness and verdict grounding.
+
+Runs during Phase 2 (agent_faithfulness) and Phase 3 (verdict_grounding).
+Can abort a run if it detects critical inconsistencies.
+"""
 from __future__ import annotations
 
 import asyncio

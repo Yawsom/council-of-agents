@@ -2,6 +2,8 @@
 
 A perspective-exploration and stress-test engine that runs structured multi-model deliberations over a shared **claim graph**. Several LLMs independently analyze a question, challenge each other's claims, and deliver final verdicts — with optional manipulation experiments to study sycophancy.
 
+> **Early research preview.** This is an early version of the project and is still in the research phase. APIs, configs, and experiment protocols may change without notice. Expect rough edges — use it for exploration and experimentation, not production workloads.
+
 ## How it works
 
 ```
@@ -147,14 +149,20 @@ Run with coverage:
 pytest --cov=council --cov-report=term-missing
 ```
 
+### Architecture guide
+
+For a module-by-module walkthrough of how a run flows through the codebase, see **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
+Key convention: the `agents/` package holds the shared LLM protocol (prompts + parsers) used by council members, the arbiter, and the observer. Role-specific runtime classes live in `agents/agent.py`, `arbiter/`, and `observer/`.
+
 ## Project structure
 
 ```
 src/council/
-├── cli.py                 # Typer CLI entry point
-├── orchestration/         # Phase 1, 2, 3 pipeline
+├── cli.py                 # Entry point — wires config, providers, phases
+├── orchestration/         # Phase 1, 2, 3 pipeline (see docs/ARCHITECTURE.md)
 ├── graph/                 # Claim graph (nodes, edges, serializer)
-├── agents/                # Sub-agent calls, prompts, JSON parser
+├── agents/                # SubAgent runtime + shared prompts/parsers
 ├── arbiter/               # Provocateur that drives the debate
 ├── observer/              # Auditor for grounding and consistency
 ├── identity/              # Embedding-based claim deduplication
@@ -163,6 +171,9 @@ src/council/
 ├── artifacts/             # Run output writer
 ├── config/                # Pydantic schema and YAML loader
 └── mock/                  # Mock provider for dry runs
+
+docs/
+└── ARCHITECTURE.md        # Module guide and run lifecycle
 
 config/                    # Default run configuration
 experiments/               # Batch experiment definitions

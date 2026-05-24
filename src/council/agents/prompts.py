@@ -1,3 +1,8 @@
+"""Prompt templates for all roles and phases.
+
+Contains system prompts and user-message builders for council agents (phases 1–3),
+the arbiter, and the observer. Schemas described here must match agents/parser.py.
+"""
 from __future__ import annotations
 
 PHASE1_SYSTEM = """\

@@ -1,3 +1,8 @@
+"""Council member (SubAgent) — LLM calls, cost tracking, and exclusion state.
+
+SubAgent is the runtime wrapper for debating agents. It does not parse responses;
+orchestration/ handles parsing and graph ingestion after each call.
+"""
 from __future__ import annotations
 
 import asyncio
@@ -30,6 +35,8 @@ class AgentCallResult:
 
 
 class SubAgent:
+    """A council member that calls an LLM and tracks its claims and costs."""
+
     def __init__(self, config: AgentConfig, provider: LLMProvider) -> None:
         self.config = config
         self.provider = provider

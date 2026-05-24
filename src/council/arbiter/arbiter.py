@@ -1,3 +1,9 @@
+"""Arbiter — provocateur that drives debate between rounds.
+
+After each agent round the arbiter reviews the graph, issues a targeted query
+for the next round, may apply graph operations (merges, status changes), and
+can signal early termination or abort.
+"""
 from __future__ import annotations
 
 import logging

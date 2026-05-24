@@ -1,3 +1,9 @@
+"""Claim deduplication during graph ingestion.
+
+When an agent proposes a new claim, check_identity() compares it against
+existing claims via embedding similarity. High similarity auto-merges;
+borderline cases are resolved by a small LLM disambiguation call.
+"""
 from __future__ import annotations
 
 import logging
@@ -63,9 +69,13 @@ async def check_identity(
     merge_log: Optional[list[dict]] = None,
 ) -> DedupResult:
     """
-    Check if new_text duplicates any existing claim.
-    Returns DedupResult describing the decision.
-    All decisions are logged to merge_log (appended in-place).
+    Decide whether new_text duplicates an existing claim.
+
+    similarity >= similarity_high  → auto-merge
+    similarity <= similarity_low   → new claim
+    in between                     → LLM disambiguation call
+
+    All decisions are appended to merge_log when provided.
     """
     if not existing_claims:
         return DedupResult(

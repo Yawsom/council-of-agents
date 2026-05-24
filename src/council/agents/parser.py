@@ -1,3 +1,8 @@
+"""JSON extraction and schema validation for all LLM response types.
+
+Used by council agents (phases 1–3), the arbiter, and the observer.
+Raises ParseError for malformed JSON, SchemaError for missing/invalid fields.
+"""
 from __future__ import annotations
 
 import json
