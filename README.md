@@ -121,6 +121,10 @@ council experiment experiments/example.yaml --mock
 
 Each experiment entry can specify a `roster` of models, a `prompt_file`, and per-run `overrides`.
 
+### Example outputs
+
+To see what a successful run looks like in practice (independent Phase 1 claims, contested graph, distinct verdicts), see **[docs/EXAMPLE_RUNS.md](docs/EXAMPLE_RUNS.md)** — summaries of real runs including the crumple-vs-fold and sandwich-optimality deliberations.
+
 ## Output artifacts
 
 Each run creates a timestamped directory under `runs/`:
@@ -182,6 +186,7 @@ src/council/
 
 docs/
 ├── ARCHITECTURE.md        # Module guide and run lifecycle
+├── EXAMPLE_RUNS.md        # Summaries of exemplary deliberation runs
 └── KNOWN_LIMITATIONS.md   # Developer reference — full limitation backlog
 
 config/                    # Default run configuration
