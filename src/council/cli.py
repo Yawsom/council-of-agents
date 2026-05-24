@@ -9,7 +9,6 @@ See docs/ARCHITECTURE.md for how modules connect.
 from __future__ import annotations
 
 import asyncio
-import io
 import json
 import logging
 import sys
@@ -17,7 +16,6 @@ from pathlib import Path
 from typing import Optional
 
 import typer
-import yaml
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
@@ -27,7 +25,12 @@ load_dotenv()  # loads .env from cwd or any parent directory
 from .agents.agent import SubAgent
 from .arbiter.arbiter import Arbiter
 from .artifacts.writer import ArtifactsWriter
-from .config.loader import load_experiment_config, load_run_config, load_run_config_from_dict, snapshot_config
+from .config.loader import (
+    config_snapshot_yaml,
+    load_experiment_config,
+    load_run_config,
+    load_run_config_from_dict,
+)
 from .config.schema import RunConfig
 from .graph.graph import ClaimGraph
 from .identity.embedder import build_embedder
@@ -293,10 +296,7 @@ def run(
 
     writer = ArtifactsWriter(base_dir=run_config.artifacts_dir, run_name=run_config.name)
 
-    # Write config snapshot
-    buf = io.StringIO()
-    yaml.dump(run_config.model_dump(), buf, default_flow_style=False, sort_keys=False)
-    writer.write_config_snapshot(buf.getvalue())
+    writer.write_config_snapshot(config_snapshot_yaml(run_config))
 
     summary = asyncio.run(_run_council(run_config, writer))
     console.print(f"\n[green]Artifacts written to:[/green] {summary['artifact_dir']}")
@@ -334,9 +334,7 @@ def experiment(
         run_config = load_run_config_from_dict(base)
         writer = ArtifactsWriter(base_dir=run_config.artifacts_dir, run_name=run_config.name)
 
-        buf = io.StringIO()
-        yaml.dump(run_config.model_dump(), buf, default_flow_style=False, sort_keys=False)
-        writer.write_config_snapshot(buf.getvalue())
+        writer.write_config_snapshot(config_snapshot_yaml(run_config))
 
         try:
             summary = asyncio.run(_run_council(run_config, writer))

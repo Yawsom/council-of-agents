@@ -4,6 +4,10 @@ A perspective-exploration and stress-test engine that runs structured multi-mode
 
 > **Early research preview.** This is an early version of the project and is still in the research phase. APIs, configs, and experiment protocols may change without notice. Expect rough edges — use it for exploration and experimentation, not production workloads.
 
+### Active development constraints
+
+The main bottleneck right now is **access to paid models** and **aggressive rate limiting on OpenRouter** (especially on free-tier endpoints). A full council run issues many parallel and sequential LLM calls across multiple models, so development and testing progress slowly when requests are throttled or queued for long backoff windows. The default config is tuned for free models (`stagger_delay`, `max_backoff`); meaningful multi-model experiments still need reliable paid capacity. Use `--mock` for pipeline work; expect live runs to be slow or fragile until billing and rate limits are less of a constraint.
+
 ## How it works
 
 ```
@@ -153,6 +157,8 @@ pytest --cov=council --cov-report=term-missing
 
 For a module-by-module walkthrough of how a run flows through the codebase, see **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
+For a full working list of known gaps and iteration backlog, see **[docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md)** (developer reference).
+
 Key convention: the `agents/` package holds the shared LLM protocol (prompts + parsers) used by council members, the arbiter, and the observer. Role-specific runtime classes live in `agents/agent.py`, `arbiter/`, and `observer/`.
 
 ## Project structure
@@ -173,7 +179,8 @@ src/council/
 └── mock/                  # Mock provider for dry runs
 
 docs/
-└── ARCHITECTURE.md        # Module guide and run lifecycle
+├── ARCHITECTURE.md        # Module guide and run lifecycle
+└── KNOWN_LIMITATIONS.md   # Developer reference — full limitation backlog
 
 config/                    # Default run configuration
 experiments/               # Batch experiment definitions
@@ -191,6 +198,18 @@ tests/                     # Unit and integration tests
 ## Known limitations
 
 - **Claim deduplication uses cosine similarity as a coarse filter.** When agents propose new claims, `identity/` compares embedding vectors and uses cosine similarity to decide whether two statements might be the same assertion. This works as a fast first pass but is not particularly accurate — paraphrases can score low, while superficially similar but logically distinct claims can score high. Borderline cases fall through to an LLM disambiguation call, but the embedding step still shapes which pairs get reviewed. Alternative deduplication approaches are under exploration; treat merge decisions in `merge_log.json` with appropriate skepticism.
+
+- **Assumptions are modeled but not ingested.** The graph supports assumption nodes and `depends_on` edges, but the orchestration pipeline never creates assumptions from agent output — only claims, evidence, and explicit edges.
+
+- **Evidence is not auto-linked to claims.** Phase 1 accepts a `supports` field on evidence, but no edge is created automatically. Agents must emit `supports` edges manually in Phase 2.
+
+- **The full graph is serialized into every prompt.** As deliberations grow, context size grows with no truncation or summarization. Runs may degrade or hit context limits on long debates.
+
+- **One JSON parse failure permanently excludes an agent.** Council agents get a single reformat retry; on second failure they are skipped for the rest of the run.
+
+- **Default config reuses the same model across roles.** The default roster uses Gemma as a council agent, arbiter, and observer — factor this into experiment design, especially for Version B.
+
+See **[docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md)** for the complete developer reference (protocol fragility, termination heuristics, mock fidelity, backlog, etc.).
 
 ## License
 
