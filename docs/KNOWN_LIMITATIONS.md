@@ -1,179 +1,152 @@
-# Known Limitations (Developer Reference)
+# Known Limitations
 
-Working document for iteration — not user-facing documentation. See [README](../README.md#known-limitations) for the public summary.
+Council of Agents is an early research preview (v0.1). The system works end-to-end, but the items below describe real constraints you should expect when running or interpreting results.
 
-Last reviewed: 2026-05-24
-
----
-
-## Security and operations
-
-### OpenRouter-only live provider
-
-All live LLM calls go through OpenRouter. No direct Anthropic/OpenAI provider implementations.
-
-### Paid model access and rate limiting (active dev blocker)
-
-OpenRouter free-tier models have unpublished, dynamic rate limits. A full run fans out across many agents plus arbiter/observer calls per round, so development is often blocked by 429s and long backoff waits rather than by code defects. Paid model access would improve test fidelity but is not always available during iteration. This is the primary practical constraint on how fast the project can be exercised end-to-end.
-
-### No checkpoint / resume
-
-A failure mid-run loses progress. Graph snapshots are written per round but there is no command to resume from a snapshot.
-
-### Experiments run sequentially
-
-`council experiment` runs entries one at a time. No parallelism for batch experiments.
+For design intent, see [PHILOSOPHY.md](PHILOSOPHY.md). For what good output looks like, see [EXAMPLE_RUNS.md](EXAMPLE_RUNS.md).
 
 ---
 
-## Claim deduplication (`identity/`)
+## Running live experiments
+
+### OpenRouter only
+
+Live runs currently go through [OpenRouter](https://openrouter.ai/) only. There is no built-in direct integration with individual provider APIs (Anthropic, OpenAI, etc.).
+
+### Rate limits and model access
+
+Free-tier models on OpenRouter have **unpublished, dynamic rate limits**. A full council run issues many parallel and sequential LLM calls (multiple agents × multiple rounds × arbiter × observer), so runs are often slow or fail with 429 errors and long backoff waits.
+
+The default config tunes `stagger_delay` and `max_backoff` for free models. **Reliable paid model access** improves both completion rate and debate quality.
+
+### No resume after failure
+
+If a run fails mid-deliberation, progress is lost. Graph snapshots are saved per round under `runs/`, but there is no command to resume from a checkpoint.
+
+### Batch experiments are sequential
+
+`council experiment` runs each entry one after another. There is no parallel execution for experiment batches.
+
+---
+
+## Mock mode (`--mock`)
+
+The mock provider returns **fixed canned JSON** for every agent. Identical outputs across agents are **expected** — mock mode validates installation, CI, and artifact layout only.
+
+Do **not** use `--mock` to judge debate quality, model divergence, or what live deliberation looks like. See [EXAMPLE_RUNS.md](EXAMPLE_RUNS.md#mock-runs---mock-identical-output-by-design).
+
+---
+
+## Claim deduplication
+
+When agents propose new claims, the system tries to merge near-duplicates into one graph node using embedding similarity, with an LLM disambiguation step for borderline cases.
 
 ### Cosine similarity is a coarse filter
 
-Embedding cosine similarity is used as a fast first pass. It misses paraphrases, false-merges superficially similar claims, and only the single best-matching existing claim is considered — not all pairs.
+This works as a fast first pass but is **not highly accurate**:
 
-**Exploring:** Alternative dedup approaches.
+- Paraphrases of the same idea may not merge
+- Superficially similar but logically different claims may merge incorrectly
+- Only the single best-matching existing claim is compared, not all pairs
 
-### Disambiguation is a brittle yes/no call
+Treat entries in `merge_log.json` with skepticism. Better deduplication approaches are under exploration.
 
-Borderline pairs (similarity between `similarity_low` and `similarity_high`) get a single LLM prompt asking for "Yes" or "No". No structured reasoning is persisted beyond `merge_log.json`.
+### Other dedup edge cases
 
-### Embedding failure creates silent duplicates
-
-If embedding fails, the claim is treated as new (`method: embedding_failure`). No retry, no fallback disambiguation.
-
-### Null embedder disables dedup entirely
-
-When `embedder.provider: none`, all claims are treated as distinct regardless of text overlap (except exact string match).
+- **Borderline pairs** are resolved by a simple yes/no LLM call with limited reasoning recorded
+- **Embedding failures** cause the claim to be added as new with no retry
+- **`embedder.provider: none`** disables similarity-based dedup (exact text match only)
 
 ---
 
-## Graph model and ingestion
+## Claim graph and ingestion
 
-### Assumptions are modeled but never ingested
+### Assumptions are not created from agent output
 
-`Assumption` nodes exist in `graph/nodes.py` and prompts mention `depends_on` edges to assumptions, but `orchestration/phase1.py` and `phase2.py` never call `add_assumption()`. Agents cannot create assumptions through the pipeline.
+The graph model supports assumption nodes, and prompts mention `depends_on` edges to assumptions, but the pipeline does not yet ingest assumptions from agent responses. Only claims, evidence, and explicit edges are added automatically.
 
-### Evidence `supports` field is not wired to edges
+### Evidence is not auto-linked to claims
 
-Phase 1 parses `supports` on evidence entries but only calls `add_evidence()`. No automatic `supports` edge is created. Agents must emit explicit edges in Phase 2.
+In Phase 1, evidence can include a `supports` field, but the system does not automatically create a `supports` edge. Agents must link evidence to claims explicitly in Phase 2.
 
-### Invalid edges are silently dropped
+### Invalid graph references are dropped
 
-If an agent references unknown node IDs, phase2 logs a warning and skips the edge. The agent receives no in-round feedback to correct the reference.
+If an agent cites a claim or evidence ID that does not exist, that edge is skipped (logged as a warning). The agent does not receive in-round feedback to fix the reference.
 
-### Resolved claims disappear from agent view
+### Resolved claims are hidden from prompts
 
-`serialize_open_state()` only includes `open` and `contested` claims. Resolved claims are omitted from prompts — agents lose visibility into the full debate history.
+Agents only see **open** and **contested** claims in later rounds. Resolved claims are omitted from the serialized graph view, so agents lose direct visibility into the full historical debate state.
 
-### Unanswered-challenge detection is heuristic
+### Long debates can outgrow context windows
 
-In `serializer._find_unanswered_challenges()`, a challenge counts as "answered" only if something rebuts the challenger's node (`from_id`). A `supports` edge defending the target claim does not count as an answer, despite the comment suggesting it should.
-
-### Graph size grows unbounded in prompts
-
-Full graph serialization on every agent call. Warning logged at 500 claims; no truncation, summarization, or retrieval.
+The full graph is serialized into every agent prompt. There is no truncation or summarization yet. A warning is logged when claim count exceeds 500; very long runs may degrade or hit model context limits.
 
 ---
 
-## LLM protocol fragility
+## Deliberation protocol
 
-### One parse retry, then permanent exclusion
+### Agents can be permanently excluded after one parse failure
 
-Council agents get one JSON reformat retry. On second failure they are marked `excluded` and skipped for all subsequent phases/rounds. A transient formatting glitch permanently removes an agent.
+Council agents get **one retry** if their JSON response is malformed. On a second failure they are marked excluded and skipped for the rest of the run. A transient formatting error can remove an agent entirely.
 
-### Arbiter failures fail open
+### Arbiter and observer failures are non-fatal
 
-If the arbiter can't parse its response, the round continues without a new targeted query. No retry logic (unlike council agents).
+If the arbiter or observer fails to parse a response or times out, the run **continues** without their input for that step. The observer only aborts a run when it returns a critical error with `recommended_action: abort`.
 
-### Observer failures fail open
+### Evidence is not fact-checked
 
-Observer timeout or parse error → run continues. Abort only when the observer returns `severity: error` and `recommended_action: abort`.
+Agents can cite sources freely. The observer checks whether outputs are consistent with the **graph structure**, not whether cited evidence is real, current, or verifiable.
 
-### No external grounding for evidence
+### Lenient JSON parsing
 
-Agents cite sources freely. The observer checks faithfulness to the graph structure, not whether cited evidence is real, current, or verifiable.
+Responses are parsed by extracting the first `{` … `}` block in the text. Surrounding prose or multiple JSON objects can cause silent misparsing.
 
-### JSON extraction is lenient
+### Termination can feel abrupt
 
-`parser._extract_json()` grabs the first `{` to last `}` in the response. Prose or multiple JSON objects can cause silent misparsing.
+Phase 2 stops when any of several independent conditions is met (`max_rounds`, too few new claims, no challenges for N rounds, low position-update rate). These checks do not always align with intuitive “debate is done” — for example, the run may end for `no_new_claims` while challenges are still active.
 
----
+### Default config uses one model in multiple roles
 
-## Termination and debate dynamics
+In `config/default.yaml`, the same model family may serve as a **council agent**, **arbiter**, and **observer**. For Version B manipulation studies, factor this into interpretation (a model may effectively audit its own outputs in another role).
 
-### Termination heuristics are coarse and overlapping
+### Limited reproducibility
 
-Phase 2 checks multiple stop conditions each round (`max_rounds`, `no_new_claims`, `no_challenges`, `low_update_rate`). They are independent — e.g. `no_new_claims` can fire even when challenges are still active.
+Per-agent `seed` is optional, but there is no run-level seed or pinned prompt versioning. Model behavior and provider routing can vary between runs.
 
-### Position update rate uses total agent count
+### Minimum agent count
 
-`update_rate = position_updates / len(agents)`, not `len(active_agents)`. Excluded agents still inflate the denominator.
-
-### Default targeted query is static until arbiter succeeds
-
-Round 1 starts with a hardcoded targeted query. If the arbiter abstains, the query may not update for subsequent rounds.
+The config allows a single agent, but deliberation requires **at least two** distinct models completing the pipeline to be meaningful. Use 2–3 capable models in a similar capability band for serious experiments.
 
 ---
 
-## Experiment design
+## Version B (manipulation experiments)
 
-### Same model across roles in default config
+### Disguise fallback
 
-Gemma serves as council agent, arbiter, and observer in `config/default.yaml`. Confounds Version B studies (model auditing its own outputs in another role).
+If claim rephrasing fails, the original claim text may be injected verbatim, which makes the manipulation easier to notice and weakens the experiment.
 
-### Version B disguise can fall back to verbatim text
+### Synthetic peer presentation
 
-If rephrasing fails in `DisguisePipeline._rephrase()`, the original claim text is injected — making manipulation easier to detect and weakening the experiment.
+Disguised self-support appears under a `synthetic_peer_*` label in a separate prompt section, not as ordinary graph nodes. This is intentional for logging and analysis but reduces ecological validity compared to fully hidden manipulation.
 
-### Version B synthetic peer is obviously synthetic
+### Less automated test coverage
 
-Injected claims appear under a `synthetic_peer_<hash>` ID in a separate prompt section, not as normal graph nodes. This is a deliberate design choice but limits ecological validity.
-
-### Limited reproducibility controls
-
-Optional per-agent `seed` exists but no run-level seed. Model weights and provider routing can change between runs. No prompt version pinning.
-
-### Config allows 1 agent despite 2+ recommendation
-
-Schema validator message says "at least 2" in comments but only enforces `len(agents) >= 1`. Single-agent runs are valid but meaningless for deliberation.
+Version B has less automated test coverage than Version A. Validate manipulation runs manually when experimenting.
 
 ---
 
-## Testing and mock fidelity
+## Interpreting results
 
-### Version B untested in CI
+| What you want | What to check |
+|---------------|----------------|
+| Did the pipeline work? | Artifacts exist under `runs/`, `final_graph.json`, `verdicts.json`, `output.md` |
+| Did models actually disagree? | Phase 3 `final_position` fields differ in **substance** (live runs only) |
+| Did stress-testing happen? | Contested claims, edges, confidence updates in `output.md` / graph snapshots |
+| Was Phase 1 independent? | Different `transcripts/phase1/` outputs per agent |
 
-Integration test covers Version A only. Manipulation pipeline has no automated test.
-
-### Mock provider homogenizes agent behavior
-
-`MockProvider` returns nearly identical canned JSON for all agents. `--mock` validates plumbing, not model divergence or debate quality.
-
-### No live API tests
-
-Provider retry/backoff logic is untested against real OpenRouter responses.
+Convergence after scrutiny and divergence after scrutiny are both valid outcomes. See [PHILOSOPHY.md](PHILOSOPHY.md#convergence-is-a-result-not-a-target).
 
 ---
 
-## Priority backlog (suggested fix order)
+## Reporting issues
 
-| Priority | Item | Effort |
-|----------|------|--------|
-| P1 | Wire evidence `supports` → edges | Small |
-| P1 | Ingest assumptions from agent output | Medium |
-| P2 | Graph prompt truncation / summarization | Large |
-| P2 | Separate models for agent/arbiter/observer in default config | Small |
-| P2 | Version B integration test | Small |
-| P3 | Checkpoint / resume from graph snapshot | Large |
-| P3 | Replace cosine dedup with better approach | Research |
-
----
-
-## Adding new limitations
-
-When you discover a new limitation during iteration:
-
-1. Add it to this file under the relevant section
-2. If user-facing or safety-critical, add a one-line summary to README **Known limitations**
-3. If it affects architecture assumptions, update `ARCHITECTURE.md`
+If you hit a limitation not listed here, open an issue on the repository with the run directory name (from `runs/`), config version, and whether the run used `--mock`.

@@ -154,7 +154,7 @@ runs/20260524_143022_my_run/
 | [PHILOSOPHY.md](docs/PHILOSOPHY.md) | Core design intent — perspective exploration, not consensus |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Module guide and run lifecycle |
 | [EXAMPLE_RUNS.md](docs/EXAMPLE_RUNS.md) | Summaries of exemplary deliberation runs |
-| [KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) | Developer reference — gaps and iteration backlog |
+| [KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) | Current constraints and caveats for v0.1 |
 
 Key code convention: the `agents/` package holds the shared LLM protocol (prompts + parsers) used by council members, the arbiter, and the observer. Role-specific runtime classes live in `agents/agent.py`, `arbiter/`, and `observer/`.
 
@@ -193,7 +193,7 @@ docs/
 ├── PHILOSOPHY.md          # Core design intent
 ├── ARCHITECTURE.md        # Module guide and run lifecycle
 ├── EXAMPLE_RUNS.md        # Summaries of exemplary deliberation runs
-└── KNOWN_LIMITATIONS.md   # Developer reference — full limitation backlog
+└── KNOWN_LIMITATIONS.md   # Current constraints and caveats for v0.1
 
 config/                    # Default run configuration
 experiments/               # Batch experiment definitions
@@ -222,7 +222,7 @@ tests/                     # Unit and integration tests
 
 - **Default config reuses the same model across roles.** The default roster uses Gemma as a council agent, arbiter, and observer — factor this into experiment design, especially for Version B.
 
-See **[docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md)** for the complete developer reference (protocol fragility, termination heuristics, mock fidelity, backlog, etc.).
+See **[docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md)** for a fuller list (rate limits, mock mode, dedup, graph ingestion, Version B, and interpreting results).
 
 ## License
 

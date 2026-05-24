@@ -72,4 +72,4 @@ See [EXAMPLE_RUNS.md](EXAMPLE_RUNS.md) for summaries of real runs that demonstra
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how phases and modules implement this design
 - [EXAMPLE_RUNS.md](EXAMPLE_RUNS.md) — concrete run summaries
-- [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) — current gaps and iteration backlog
+- [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) — current constraints and caveats

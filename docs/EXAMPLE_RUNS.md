@@ -154,4 +154,4 @@ After a **live** run, open `runs/<latest>/output.md` and check that Phase 3 verd
 
 - [PHILOSOPHY.md](PHILOSOPHY.md) — core design intent
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how phases and roles connect
-- [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) — rate limits, dedup, and other iteration notes
+- [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) — current constraints and caveats
