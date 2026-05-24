@@ -1,5 +1,7 @@
 # Council of Agents
 
+**v0.1.0** — research preview
+
 A perspective-exploration and stress-test engine that runs structured multi-model deliberations over a shared **claim graph**. Several LLMs independently analyze a question, challenge each other's claims, and deliver final verdicts — with optional manipulation experiments to study sycophancy.
 
 > **Early research preview.** This is an early version of the project and is still in the research phase. APIs, configs, and experiment protocols may change without notice. Expect rough edges — use it for exploration and experimentation, not production workloads.
