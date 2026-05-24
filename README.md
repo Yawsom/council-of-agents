@@ -188,6 +188,10 @@ tests/                     # Unit and integration tests
 - **Start with `--mock`** before spending API credits. Then try 2–3 agents before scaling to the full 6-model roster in `config/default.yaml`.
 - **Version B interpretation:** The arbiter/observer model (Gemma in the default config) also participates as an agent — factor that into experiment analysis.
 
+## Known limitations
+
+- **Claim deduplication uses cosine similarity as a coarse filter.** When agents propose new claims, `identity/` compares embedding vectors and uses cosine similarity to decide whether two statements might be the same assertion. This works as a fast first pass but is not particularly accurate — paraphrases can score low, while superficially similar but logically distinct claims can score high. Borderline cases fall through to an LLM disambiguation call, but the embedding step still shapes which pairs get reviewed. Alternative deduplication approaches are under exploration; treat merge decisions in `merge_log.json` with appropriate skepticism.
+
 ## License
 
 Not yet specified. Add a `LICENSE` file before distributing.
