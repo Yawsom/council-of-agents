@@ -2,15 +2,31 @@
 
 **v0.1.0** — research preview
 
-A perspective-exploration and stress-test engine that runs structured multi-model deliberations over a shared **claim graph**. Several LLMs independently analyze a question, challenge each other's claims, and deliver final verdicts — with optional manipulation experiments to study sycophancy.
+A **perspective-exploration** engine: several heterogeneous LLMs independently analyze a question, stress-test each other's claims on a shared graph, and deliver **separate battle-tested verdicts**. This is not a consensus bot. The goal is to surface durable disagreements, abandoned claims, and what survived scrutiny — not to merge opinions into one answer.
 
 > **Early research preview.** This is an early version of the project and is still in the research phase. APIs, configs, and experiment protocols may change without notice. Expect rough edges — use it for exploration and experimentation, not production workloads.
+
+## Philosophy
+
+**Explore first, debate second.** In Phase 1, each agent analyzes the question in isolation. They are not told they are in a multi-agent debate. The point is to capture genuine independent reasoning before social pressure enters.
+
+**Claims, not vibes.** Reasoning is structured as atomic claims with falsifiers, evidence, and edges (supports, contradicts, rebuts). Everything lands in a shared **claim graph** so arguments can be challenged, tracked, and audited — not lost in chat history.
+
+**Stress-test, don't harmonize.** Phase 2 exists to attack weak assumptions. Agents have no protocol incentive to agree with each other. The arbiter provokes unresolved tensions; the observer checks faithfulness. A good run produces **multiple distinct verdicts** — each agent reporting what they still defend, what they abandoned, which peer challenges they found compelling, and what remains uncertain.
+
+**Convergence is a result, not a target.** If models independently reach similar conclusions after scrutiny, that is informative. If they diverge, that is often more informative. Both outcomes are valid research signals.
+
+**Manipulation as experiment.** Version B optionally injects disguised self-reinforcement (agents see rephrased versions of their own claims as fake peer support) to study sycophancy and epistemic resilience under manipulated social proof.
+
+**What you get out.** A run is successful when artifacts show independent Phase 1 divergence, a contested graph in Phase 2, and Phase 3 verdicts that reflect real scrutiny — not copy-paste agreement. See [docs/EXAMPLE_RUNS.md](docs/EXAMPLE_RUNS.md) for concrete examples.
 
 ### Active development constraints
 
 The main bottleneck right now is **access to paid models** and **aggressive rate limiting on OpenRouter** (especially on free-tier endpoints). A full council run issues many parallel and sequential LLM calls across multiple models, so development and testing progress slowly when requests are throttled or queued for long backoff windows. The default config is tuned for free models (`stagger_delay`, `max_backoff`); meaningful multi-model experiments still need reliable paid capacity. Use `--mock` for pipeline work; expect live runs to be slow or fragile until billing and rate limits are less of a constraint.
 
 ## How it works
+
+The pipeline follows the philosophy above: sealed exploration → structured conflict → individual verdicts.
 
 ```
 Question
@@ -27,7 +43,7 @@ Phase 2 — Stress-test loop
    │  Loop until termination criteria met
    ▼
 Phase 3 — Verdicts
-   │  Each agent summarizes what survived scrutiny
+   │  Each agent: what survived, what was abandoned, peer challenges
    ▼
 Artifacts written to runs/
 ```
@@ -94,7 +110,7 @@ Key fields:
 council run --mock
 ```
 
-Uses canned responses from the mock provider. Good for verifying installation and artifact output.
+Uses canned responses from the mock provider. Identical outputs across agents are **expected** — mock validates pipeline wiring only, not debate dynamics.
 
 ### Single deliberation
 
