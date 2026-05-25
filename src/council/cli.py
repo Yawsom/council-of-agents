@@ -294,7 +294,10 @@ def run(
     if mock:
         run_config.mock = True
 
-    writer = ArtifactsWriter(base_dir=run_config.artifacts_dir, run_name=run_config.name)
+    writer = ArtifactsWriter(
+        base_dir=run_config.artifacts_dir,
+        question=run_config.get_prompt_text(),
+    )
 
     writer.write_config_snapshot(config_snapshot_yaml(run_config))
 
@@ -332,7 +335,10 @@ def experiment(
             base["mock"] = True
 
         run_config = load_run_config_from_dict(base)
-        writer = ArtifactsWriter(base_dir=run_config.artifacts_dir, run_name=run_config.name)
+        writer = ArtifactsWriter(
+            base_dir=run_config.artifacts_dir,
+            question=run_config.get_prompt_text(),
+        )
 
         writer.write_config_snapshot(config_snapshot_yaml(run_config))
 
