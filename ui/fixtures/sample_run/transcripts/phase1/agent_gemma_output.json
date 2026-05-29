@@ -1,0 +1,22 @@
+{
+  "agent_id": "agent_gemma",
+  "round": 0,
+  "scratchpad": "Consider hygiene, absorbency, and mechanical cleaning trade-offs.",
+  "new_claims": [
+    {
+      "text": "Folding increases thickness and absorbency per square inch.",
+      "type": "fact",
+      "confidence": 0.75,
+      "falsifier": "If crumpling shows equal absorbency in controlled tests."
+    },
+    {
+      "text": "Crumpling adds texture that may improve mechanical cleaning.",
+      "type": "fact",
+      "confidence": 0.6,
+      "falsifier": null
+    }
+  ],
+  "new_evidence": [],
+  "new_edges": [],
+  "position_updates": []
+}

@@ -1,0 +1,57 @@
+{
+  "claims": [
+    {
+      "id": "claim:a1b2c3d4",
+      "text": "Folding increases thickness and absorbency per square inch.",
+      "type": "fact",
+      "proposer": "agent_gemma",
+      "round_introduced": 0,
+      "status": "supported",
+      "per_agent_confidence": { "agent_gemma": 0.82, "agent_elephant": 0.7 },
+      "falsifier": "If crumpling shows equal absorbency in controlled tests."
+    },
+    {
+      "id": "claim:e5f6g7h8",
+      "text": "Crumpling adds texture that may improve mechanical cleaning.",
+      "type": "fact",
+      "proposer": "agent_gemma",
+      "round_introduced": 0,
+      "status": "contested",
+      "per_agent_confidence": { "agent_gemma": 0.5, "agent_elephant": 0.55 },
+      "falsifier": null
+    },
+    {
+      "id": "claim:m3n4o5p6",
+      "text": "Smear-risk rises when liquid fraction exceeds ~30% with crumpled preferential flow paths.",
+      "type": "causal",
+      "proposer": "agent_gemma",
+      "round_introduced": 1,
+      "status": "supported",
+      "per_agent_confidence": { "agent_gemma": 0.78 },
+      "falsifier": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence:q7r8s9t0",
+      "text": "Pilot blotting test on single-ply showed fold > crumple at 40% liquid load.",
+      "source": "synthetic pilot",
+      "type": "empirical",
+      "proposer": "agent_elephant",
+      "round_introduced": 1,
+      "per_agent_reliability": { "agent_elephant": 0.65 }
+    }
+  ],
+  "assumptions": [],
+  "edges": [
+    {
+      "id": "edge:y5z6a7b8",
+      "type": "supports",
+      "from_id": "evidence:q7r8s9t0",
+      "to_id": "claim:a1b2c3d4",
+      "rationale": "Empirical blotting favors folding at high liquid load.",
+      "proposer": "agent_elephant",
+      "round_introduced": 1
+    }
+  ]
+}

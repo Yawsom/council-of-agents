@@ -1,0 +1,40 @@
+[
+  {
+    "agent_id": "agent_gemma",
+    "final_position": "Leans folding as the more robust hygienic default across liquid levels; crumpling risks smearing past ~30% liquid fraction.",
+    "original_claims_surviving": [
+      {
+        "claim_id": "claim:a1b2c3d4",
+        "reasoning": "Still holds after blotting evidence and peer challenge."
+      },
+      {
+        "claim_id": "claim:m3n4o5p6",
+        "reasoning": "Survived scrutiny as key contextual qualifier."
+      }
+    ],
+    "original_claims_abandoned": [],
+    "compelling_challenges_from_others": [],
+    "rejected_challenges_from_others": [],
+    "remaining_uncertainties": ["Exact liquid fraction threshold varies by ply brand."]
+  },
+  {
+    "agent_id": "agent_elephant",
+    "final_position": "No universal winner — crumple when particulate-heavy/dry; fold when liquid-heavy.",
+    "original_claims_surviving": [
+      {
+        "claim_id": "claim:i9j0k1l2",
+        "reasoning": "Handling advantage remains in low-liquid contexts."
+      }
+    ],
+    "original_claims_abandoned": [],
+    "compelling_challenges_from_others": [
+      {
+        "claim_id": "claim:m3n4o5p6",
+        "from_agent": "agent_gemma",
+        "reasoning": "Smear-risk model explains high-liquid failure mode for crumple."
+      }
+    ],
+    "rejected_challenges_from_others": [],
+    "remaining_uncertainties": ["Need cross-brand replication of pilot blotting."]
+  }
+]

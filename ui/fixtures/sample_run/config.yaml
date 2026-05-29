@@ -1,0 +1,10 @@
+name: sample_run
+prompt: "Should you crumple or fold toilet paper before use?"
+version: A
+agents:
+  - id: agent_gemma
+    model: google/gemma-4-26b-a4b-it:free
+  - id: agent_elephant
+    model: openrouter/elephant-alpha
+arbiter_model: google/gemma-4-26b-a4b-it:free
+observer_model: google/gemma-4-26b-a4b-it:free

@@ -169,6 +169,8 @@ Key code convention: the `agents/` package holds the shared LLM protocol (prompt
 
 ## Development
 
+**Experimental UI:** debate-room viewer for run artifacts — see [`ui/README.md`](ui/README.md).
+
 Run the test suite:
 
 ```bash

@@ -1,0 +1,16 @@
+{
+  "agent_id": "agent_elephant",
+  "round": 0,
+  "scratchpad": "Usability and structure matter for consistent use.",
+  "new_claims": [
+    {
+      "text": "Folded sheets are easier to grasp and count.",
+      "type": "fact",
+      "confidence": 0.8,
+      "falsifier": null
+    }
+  ],
+  "new_evidence": [],
+  "new_edges": [],
+  "position_updates": []
+}

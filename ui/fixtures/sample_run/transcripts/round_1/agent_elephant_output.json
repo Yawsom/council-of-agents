@@ -1,0 +1,22 @@
+{
+  "agent_id": "agent_elephant",
+  "round": 1,
+  "new_claims": [],
+  "new_evidence": [
+    {
+      "text": "Pilot blotting test on single-ply showed fold > crumple at 40% liquid load.",
+      "source": "synthetic pilot",
+      "type": "empirical",
+      "supports": "claim:a1b2c3d4"
+    }
+  ],
+  "new_edges": [
+    {
+      "type": "contradicts",
+      "from": "claim:i9j0k1l2",
+      "to": "claim:e5f6g7h8",
+      "rationale": "Texture benefit may not outweigh handling advantage."
+    }
+  ],
+  "position_updates": []
+}

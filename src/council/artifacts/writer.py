@@ -3,18 +3,17 @@ from __future__ import annotations
 
 import json
 import textwrap
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from ..agents.parser import VerdictResponse
 from ..graph.graph import ClaimGraph
+from .naming import build_run_dir_name
 
 
 class ArtifactsWriter:
-    def __init__(self, base_dir: str, run_name: str) -> None:
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.run_dir = Path(base_dir) / f"{ts}_{run_name}"
+    def __init__(self, base_dir: str, question: str) -> None:
+        self.run_dir = Path(base_dir) / build_run_dir_name(question, base_dir)
         self.run_dir.mkdir(parents=True, exist_ok=True)
         (self.run_dir / "transcripts" / "phase1").mkdir(parents=True, exist_ok=True)
         (self.run_dir / "graph_snapshots").mkdir(parents=True, exist_ok=True)

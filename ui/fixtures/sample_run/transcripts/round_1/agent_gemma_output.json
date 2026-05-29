@@ -1,0 +1,23 @@
+{
+  "agent_id": "agent_gemma",
+  "round": 1,
+  "scratchpad": "Respond to density dispute; introduce liquid-fraction smear model.",
+  "new_claims": [
+    {
+      "text": "Smear-risk rises when liquid fraction exceeds ~30% with crumpled preferential flow paths.",
+      "type": "causal",
+      "confidence": 0.65,
+      "falsifier": null
+    }
+  ],
+  "new_evidence": [],
+  "new_edges": [],
+  "position_updates": [
+    {
+      "claim_id": "claim:e5f6g7h8",
+      "new_confidence": 0.55,
+      "triggered_by": "claim:i9j0k1l2",
+      "reasoning": "Handling advantage does not negate texture cleaning in dry-heavy loads."
+    }
+  ]
+}

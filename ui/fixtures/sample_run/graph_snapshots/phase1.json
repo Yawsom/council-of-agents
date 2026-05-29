@@ -1,0 +1,37 @@
+{
+  "claims": [
+    {
+      "id": "claim:a1b2c3d4",
+      "text": "Folding increases thickness and absorbency per square inch.",
+      "type": "fact",
+      "proposer": "agent_gemma",
+      "round_introduced": 0,
+      "status": "open",
+      "per_agent_confidence": { "agent_gemma": 0.75 },
+      "falsifier": "If crumpling shows equal absorbency in controlled tests."
+    },
+    {
+      "id": "claim:e5f6g7h8",
+      "text": "Crumpling adds texture that may improve mechanical cleaning.",
+      "type": "fact",
+      "proposer": "agent_gemma",
+      "round_introduced": 0,
+      "status": "open",
+      "per_agent_confidence": { "agent_gemma": 0.6 },
+      "falsifier": null
+    },
+    {
+      "id": "claim:i9j0k1l2",
+      "text": "Folded sheets are easier to grasp and count.",
+      "type": "fact",
+      "proposer": "agent_elephant",
+      "round_introduced": 0,
+      "status": "open",
+      "per_agent_confidence": { "agent_elephant": 0.8 },
+      "falsifier": null
+    }
+  ],
+  "evidence": [],
+  "assumptions": [],
+  "edges": []
+}

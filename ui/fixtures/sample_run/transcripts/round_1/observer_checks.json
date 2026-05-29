@@ -1,0 +1,18 @@
+[
+  {
+    "round": 1,
+    "check_type": "agent_faithfulness",
+    "subject_id": "agent_gemma",
+    "passed": true,
+    "issues": [],
+    "recommended_action": "continue"
+  },
+  {
+    "round": 1,
+    "check_type": "agent_faithfulness",
+    "subject_id": "agent_elephant",
+    "passed": true,
+    "issues": [],
+    "recommended_action": "continue"
+  }
+]

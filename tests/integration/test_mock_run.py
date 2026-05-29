@@ -53,7 +53,10 @@ async def test_full_mock_run():
     provider = MockProvider(round_counter=round_counter)
     embedder = NullEmbedder()
     graph = ClaimGraph()
-    writer = ArtifactsWriter(base_dir="/tmp/council_test_runs", run_name="test_run")
+    writer = ArtifactsWriter(
+        base_dir="/tmp/council_test_runs",
+        question=config.get_prompt_text(),
+    )
 
     agents = [SubAgent(a, provider) for a in config.agents]
     arbiter = Arbiter(provider=provider, model=config.arbiter_model, temperature=0.2)

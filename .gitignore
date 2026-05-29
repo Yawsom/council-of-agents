@@ -25,6 +25,10 @@ runs/
 .DS_Store
 **/.DS_Store
 
+# UI (Vite)
+ui/node_modules/
+ui/dist/
+
 # Editors
 .idea/
 .vscode/
